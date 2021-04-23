@@ -9,10 +9,49 @@
 // Return dp[0][n-1];
 // Time: O(n^2k), Space: O(n^2)
 
+import java.util.Arrays;
+
 class Solution {
     public static void main(String[] args) {
-        System.out.print(new Solution().maxSumAfterPartitioning(new int[]{1,15,7,9,2,5,10}, 3));
+        System.out.print(new Solution().maxSumAfterPartitioning1(new int[]{1,15,7,9,2,5,10}, 3));
     }
+
+    // DP: Memoization
+    // Use a 1-d array, dp[i] represents the max sum from i to last index. Initialize with value -1
+    // Base Case:
+    // a. If curent index has reached the end of array, return 0;
+    // b. If dp[i] has an answer, return dp[i]
+    // At each index, get the max value in range from cur index to cur index + k - 1. Then, get the max of the curMax * length + next index's greatest value (Get from dp array)
+    // Then, assign curRes to dp[curIndex] and return it
+    // Return dp[0] at the end
+    // Time: O(n*k), Space: O(n)
+    public int maxSumAfterPartitioning1(int[] arr, int k) {
+        int n = arr.length;
+        int [] dp = new int[n];
+        Arrays.fill(dp, -1);
+        helper(0, arr, k, dp);
+        return dp[0];
+    }
+
+    private int helper(int curIndex, int [] arr, int k, int [] dp) {
+        if(curIndex == arr.length) {
+            return 0;
+        }
+        else if(dp[curIndex] != -1) {
+            return dp[curIndex];
+        }
+
+        int curMax = Integer.MIN_VALUE;
+        int ans = Integer.MIN_VALUE;
+
+        for(int i = curIndex; i < curIndex + k && i < arr.length; i++) {
+            curMax = Math.max(curMax, arr[i]);
+            ans = Math.max(ans, curMax * (i - curIndex + 1) + helper(i+1, arr, k, dp));
+        }
+        dp[curIndex] = ans;
+        return dp[curIndex];
+    }
+
     public int maxSumAfterPartitioning(int[] arr, int k) {
         int n = arr.length;
         int [][] dp = new int[n][n];
