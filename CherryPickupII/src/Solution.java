@@ -62,4 +62,37 @@ class Solution {
         dp[row][col1][col2] = max + curSum;
         return max + curSum;
     }
+
+    // DP: Buttom Up
+// Use a 3-d array dp[m][n][n], dp[row][col1][col2] represent the max berries can get at row, col1 (robot1) and col2 (robot2)
+// Fill the 3-d array bottom-up. At bottom row, dp[row][col1][col2] is just the sum from robot1 and robot2
+// At other rows, dp[row][col1][col2] is the max of future row's col1 and col2 combinations plus current sum
+// Return dp[0][0][n-1] at the end
+// Time: O(mn^2), Space: O(mn^2)
+    public int cherryPickup2(int[][] grid) {
+        int m = grid.length;
+        int n = grid[0].length;
+        int [][][] dp = new int[m][n][n];
+        for(int i = m-1; i >= 0; i--) {
+            for(int j = 0; j < n; j++) {
+                for(int k = 0; k < n; k++) {
+                    if(i == m-1) {
+                        dp[i][j][k] = j == k ? grid[i][j] : grid[i][j] + grid[i][k];
+                    }
+                    else {
+                        int nextMax = 0;
+                        for(int col1 = j-1; col1 <= j+1; col1++) {
+                            for(int col2 = k-1; col2 <= k+1; col2++) {
+                                if(col1 >= 0 && col1 < n && col2 >= 0 && col2 < n) {
+                                    nextMax = Math.max(nextMax, dp[i+1][col1][col2]);
+                                }
+                            }
+                        }
+                        dp[i][j][k] = j == k ? grid[i][j] + nextMax : grid[i][j] + grid[i][k] + nextMax;
+                    }
+                }
+            }
+        }
+        return dp[0][0][n-1];
+    }
 }
