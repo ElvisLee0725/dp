@@ -13,7 +13,28 @@ import java.util.Arrays;
 
 class Solution {
     public static void main(String[] args) {
-        System.out.print(new Solution().maxSumAfterPartitioning1(new int[]{1,15,7,9,2,5,10}, 3));
+        System.out.print(new Solution().maxSumAfterPartitioning2(new int[]{1,15,7,9,2,5,10}, 3));
+    }
+
+    // DP: Optimal
+    // Use a 1-d array. dp[i] represents the max sum from index 0 to i
+    // Fill the array from 0:
+    // In nested for loops, i is the start and j is the end. The max distance between i and j is k-1
+    // Get the max in range and update dp[j] with dp[j] and max * range + dp[i-1] (previous max. If i is 0, use 0 since there is no previous max)
+    // Return dp[n-1] at the end
+    // Time: O(n*k) Space: O(n)
+    public int maxSumAfterPartitioning2(int[] arr, int k) {
+        int n = arr.length;
+        int [] dp = new int[n];
+
+        for(int j = 0; j < n; j++) {
+            int curMax = Integer.MIN_VALUE;
+            for(int i = j; i >= j-k+1 && i >= 0; i--) {
+                curMax = Math.max(curMax, arr[i]);
+                dp[j] = Math.max(dp[j], curMax * (j - i + 1) + (i == 0 ? 0 : dp[i-1]));
+            }
+        }
+        return dp[n-1];
     }
 
     // DP: Memoization
