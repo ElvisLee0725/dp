@@ -12,7 +12,45 @@
 // Time: O(mn), Space: O(mn) while m is sum / 2 and n is length of input array
 class Solution {
     public static void main(String[] args) {
-        System.out.println(new Solution().canPartition(new int[]{1, 5, 11, 5}));
+        System.out.println(new Solution().canPartition2(new int[]{1, 5, 11, 5}));
+    }
+
+    // DP: Tabulation
+    // Create a boolean [][] dp, dp[i][j] means if we pick from index i, can we form a target number at j?
+    // Initialize: dp[i][0] is true. Since target is 0, then there is no need to choose a value, it must be true. When index reaches the length of nums, it must be false except target is 0
+    // Fill table from bottom to top, left to right
+    // dp[i][j]
+    // Case 1: Cur number nums[i] is greater than target, cannot choose current value, return dp[i+1][j]
+    // Case 2: Choose value at cur index: dp[i+1][j - nums[i]] or not choose current value: dp[i+1][j]
+    // Finally, return dp[0][sum / 2] => Start from index 0, we can form target of sum / 2
+    // Time: O(mn), Space: O(mn), while m is sum / 2
+    public boolean canPartition2(int[] nums) {
+        int sum = 0;
+        for(int n : nums) {
+            sum += n;
+        }
+        if(sum % 2 == 1) {
+            return false;
+        }
+        sum /= 2;
+        boolean [][] dp = new boolean[nums.length + 1][sum + 1];
+
+        // Initialize:
+        for(int i = 0; i < dp.length; i++) {
+            dp[i][0] = true;
+        }
+
+        for(int i = dp.length - 2; i >= 0; i--) {
+            for(int j = 0; j < dp[0].length; j++) {
+                if(nums[i] > j) {
+                    dp[i][j] = dp[i+1][j];
+                }
+                else {
+                    dp[i][j] = dp[i+1][j - nums[i]] || dp[i+1][j];
+                }
+            }
+        }
+        return dp[0][sum];
     }
     private Boolean [][] dp;
     public boolean canPartition(int[] nums) {
