@@ -26,8 +26,34 @@ import java.util.Set;
 // Time: O(W), W is 365. Space: O(W)
 class Solution {
     public static void main(String[] args) {
-        System.out.println(new Solution().mincostTickets(new int[]{1,4,6,7,8,20}, new int[]{2, 7, 15} ));
+        System.out.println(new Solution().mincostTickets2(new int[]{1,4,6,7,8,20}, new int[]{2, 7, 15} ));
     }
+
+    // DP: Tabulation
+// Fill the dp array from the end, dp[i] means the min cost to travel from day i to the end
+// If current day doesn't need travel => dp[i] = dp[i+1]
+// Else, get the min of costs[0] + dp[i+1], costs[1] + dp[i+7], costs[2] + dp[i+30]
+// To prevent dp[i] from going out of bound, initialize with dp[366 + 30]
+// Time: O(W), Space: O(W)
+        public int mincostTickets2(int[] days, int[] costs) {
+            int [] dp = new int[366 + 30];
+            Set<Integer> hs = new HashSet();
+            for(int d : days) {
+                hs.add(d);
+            }
+
+            for(int i = 365; i >= days[0]; i--) {
+                if(!hs.contains(i)) {
+                    dp[i] = dp[i+1];
+                }
+                else {
+                    dp[i] = Math.min(costs[0] + dp[i+1], Math.min(costs[1] + dp[i+7], costs[2] + dp[i+30]));
+                }
+            }
+            return dp[days[0]];
+        }
+
+
     Integer [] dp;
     public int mincostTickets(int[] days, int[] costs) {
         dp = new Integer[366];
